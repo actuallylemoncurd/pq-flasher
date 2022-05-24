@@ -17,7 +17,6 @@ patches = {
         (0x0005D828, b"1K0909144R \x003501", None),  # Software number and version
         (0x0005D289, b"\x64", b"\x00"),  # Disengage countdown
         (0x0005D2FA, b"\x14", b"\x00"),  # Min speed
-        (0x0005D8AE, b"\x03", b"\x0a"),  # 10nm
         (0x0005FFFC, b"Ende", b"\xff\xff\xff\xff"),  # End of FW marker
     ]
 }
