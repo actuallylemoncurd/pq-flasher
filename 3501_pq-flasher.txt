@@ -1,0 +1,58 @@
+Instructions for modifying ZFgen3 rack with 3501 fw
+Note not all of these steps are necessary, it's just what worked for me.
+My config was - OP3T Freon running an old 0.8.2 branch, BP with dream harness connected to ext CAN filtering
+Connect a battery charger.
+Read Willem's instructions fully:
+https://github.com/pd0wm/pq-flasher
+
+Firstly need to mount system as rw:
+mount -o remount,rw /dev/block/bootdevice/by-name/system /system
+
+1. cd /data/
+2. mv openpilot backup_openpilot
+3. git clone https://github.com/commaai/openpilot -b master
+4. git submodule init
+5. git submodule update
+6. git clone https://github.com/pd0wm/pq-flasher -b 3501-key
+7. cd /pq-flasher
+8. pip install -r requirements.txt
+9. cd /data/panda/board
+10. ./ flash.sh
+11. killall tmux
+12. check panda is connected with lsusb:
+ 
+Bus 001 Device 003: ID bbaa:ddcc - panda
+Bus 001 Device 001: ID 1d6b:0002
+Bus 002 Device 001: ID 1d6b:0003
+
+13. ./01_dump.py --output firmware/orig.bin
+
+
+If you see this error it means panda is connected, but not talking to the steering rack:
+
+opening device 2b0022000751393038373731 0xddcc
+connected
+Traceback (most recent call last):
+  File "./brute_force_pasword.py", line 28, in <module>
+    tp20 = TP20Transport(p, 0x9)
+  File "/data/pq-flash-old/tp20.py", line 34, in __init__
+    self.open_channel(module)
+  File "/data/pq-flash-old/tp20.py", line 88, in open_channel
+    dat = self.can_recv(BROADCAST_ADDR + module)
+  File "/data/pq-flash-old/tp20.py", line 63, in can_recv
+    raise MessageTimeoutError("Timed out waiting for message")
+tp20.MessageTimeoutError: Timed out waiting for message
+
+In my case I repinned my dream harness to swap CAN-0 and CAN-1 interfaces at the relay connector.
+HOWEVER you should be able to change the communication bus in panda that has your powertrain bus connected here:
+https://github.com/pd0wm/pq-flasher/blob/master/tp20.py#L22
+Change bus from 0 to 1
+
+CAN0 is pins 4/6 and CAN1 is 8/10 on the Molex 26pin relay connector.
+If you are already on PT CAN this is not necessary.  If you see the above error try unplugging the USB cable to panda and plug it in again.
+
+14. ./02_patcher.py --input firmware/orig.bin --output firmware/patched.bin --version 3501
+15. ./03_flasher.py --bus 0 --input firmware/patched.bin --start-address 380928 --end-address 385023
+16. rm -r openpilot
+17. mv backup_openpilot openpilot
+18. Donate to Willem! https://ko-fi.com/ikwillem
