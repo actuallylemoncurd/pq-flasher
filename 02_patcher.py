@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 import crcmod
 
 # fmt: off
-
+Override = b"\x99"
 # (addr, orig, new (optional) )
 patches = {
     "2501": [
@@ -26,15 +26,15 @@ patches = {
         (0x0005D2FA, b"\x14", b"\x00"),  # Min speed
         (0x0005FFFC, b"Ende", b"\xff\xff\xff\xff"),  # End of FW marker
         # many_hca_checks violation flag value buff
-        (0x0005D0A8, b"\xCC", b"\x98"),
-        (0x0005D0A9, b"\x00", b"\x01"),
-        (0x0005D0AA, b"\xCC", b"\x98"),
-        (0x0005D0AB, b"\x00", b"\x01"),
+        (0x0005D0A8, Override, b"\x98"),
+        (0x0005D0A9, Override, b"\x01"),
+        (0x0005D0AA, Override, b"\x98"),
+        (0x0005D0AB, Override, b"\x01"),
         (0x0005D096, b"\xF5", b"\xEA"),
         (0x0005D097, b"\x00", b"\x01"),
         # Loosen clamp
-        (0x0005D044, b"\x20", b"\x40"),
-        (0x0005D045, b"\x02", b"\x04"),
+        (0x0005D044, Override, b"\x40"),
+        (0x0005D045, Override, b"\x04"),
         # Booooooooooooost
         (0x0005E667, b"\x32", b"\x64"),
         (0x0005E66F, b"\x32", b"\x64"),
@@ -112,7 +112,8 @@ if __name__ == "__main__":
         length = len(orig)
         cur = input_fw_s[addr : addr + length]
 
-        assert cur == orig, f"Unexpected values in input FW {cur.hex()} expected {orig.hex()}"
+        if (cur != orig) and orig != Override:
+            assert cur == orig, f"Unexpected values in input FW {cur.hex()} expected {orig.hex()}"
 
         if new is not None:
             assert len(new) == length
