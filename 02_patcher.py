@@ -18,6 +18,39 @@ patches = {
         (0x0005D289, b"\x64", b"\x00"),  # Disengage countdown
         (0x0005D2FA, b"\x14", b"\x00"),  # Min speed
         (0x0005FFFC, b"Ende", b"\xff\xff\xff\xff"),  # End of FW marker
+    ],
+    "3501Torque": [
+        # willem baseline
+        (0x0005D828, b"1K0909144R \x003501", None),  # Software number and version
+        (0x0005D289, b"\x64", b"\x00"),  # Disengage countdown
+        (0x0005D2FA, b"\x14", b"\x00"),  # Min speed
+        (0x0005FFFC, b"Ende", b"\xff\xff\xff\xff"),  # End of FW marker
+        # many_hca_checks violation flag value buff
+        (0x0005D0A8, b"\xCC", b"\x98"),
+        (0x0005D0A9, b"\x00", b"\x01"),
+        (0x0005D0AA, b"\xCC", b"\x98"),
+        (0x0005D0AB, b"\x00", b"\x01"),
+        (0x0005D096, b"\xF5", b"\xEA"),
+        (0x0005D097, b"\x00", b"\x01"),
+        # Loosen clamp
+        (0x0005D044, b"\x20", b"\x40"),
+        (0x0005D045, b"\x02", b"\x04"),
+        # Booooooooooooost
+        (0x0005E667, b"\x32", b"\x64"),
+        (0x0005E66F, b"\x32", b"\x64"),
+        (0x0005E677, b"\x32", b"\x64"),
+
+        (0x0005E643, b"\x32", b"\x64"),
+        (0x0005E64B, b"\x32", b"\x64"),
+        (0x0005E653, b"\x32", b"\x64"),
+
+        (0x0005E63A, b"\x75", b"\xEA"),
+        (0x0005E63B, b"\x75", b"\xEA"),
+        (0x0005E63C, b"\x75", b"\xEA"),
+
+        (0x0005E658, b"\x08", b"\x10"),
+        (0x0005E659, b"\x08", b"\x10"),
+        (0x0005E65A, b"\x08", b"\x10"),
     ]
 }
 
@@ -26,7 +59,7 @@ checksums = {
     "2501": [
         (0x05EFFC, 0x5E000, 0x5EFFC),
     ],
-    "3501": [
+    "3501" or "3501Torque": [
         (0x05DFFC, 0x5C000, 0x5CFFF),
         (0x05DFFE, 0x5CFFF, 0x5DFFC),
         (0x05EFFE, 0x5E000, 0x5EFFE),
@@ -60,7 +93,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--input", required=True, help="input file to patch")
     parser.add_argument("--output", required=True, help="output file")
-    parser.add_argument("--version", default="2501", const="2501", nargs="?", choices=["2501", "3501"])
+    parser.add_argument("--version", default="2501", const="2501", nargs="?", choices=["2501", "3501", "3501Torque"])
     args = parser.parse_args()
 
     with open(args.input, "rb") as input_fw:

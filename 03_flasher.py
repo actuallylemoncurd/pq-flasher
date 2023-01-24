@@ -11,6 +11,7 @@ from kwp2000 import ACCESS_TYPE, ROUTINE_CONTROL_TYPE, KWP2000Client, SESSION_TY
 
 CHUNK_SIZE = 240
 
+toggle = 0
 
 def compute_key(seed):
     key = seed
@@ -31,6 +32,7 @@ if __name__ == "__main__":
     parser.add_argument("--input", required=True, help="input to flash")
     parser.add_argument("--start-address", default=0x5E000, type=int, help="start address")
     parser.add_argument("--end-address", default=0x5EFFF, type=int, help="end address (inclusive)")
+    parser.add_argument("--hcaTorqueMaps", default=False, type=bool, help="apply boosted hcaTorque maps")
     args = parser.parse_args()
 
     with open(args.input, "rb") as input_fw:
@@ -74,79 +76,91 @@ if __name__ == "__main__":
 
     kwp_client = KWP2000Client(tp20)
 
-    print("\nReading ecu identification & flash status")
-    ident = kwp_client.read_ecu_identifcation(ECU_IDENTIFICATION_TYPE.ECU_IDENT)
-    print("ECU identification", ident)
+    for ii in range (2):
+        if toggle == 1:
+            args.start_address = 385024 #5E000
+            args.end_address = 389119   #5EFFF
+        print("\nReading ecu identification & flash status")
+        ident = kwp_client.read_ecu_identifcation(ECU_IDENTIFICATION_TYPE.ECU_IDENT)
+        print("ECU identification", ident)
 
-    status = kwp_client.read_ecu_identifcation(ECU_IDENTIFICATION_TYPE.STATUS_FLASH)
-    print("Flash status", status)
+        status = kwp_client.read_ecu_identifcation(ECU_IDENTIFICATION_TYPE.STATUS_FLASH)
+        print("Flash status", status)
 
-    print("\nRequest seed")
-    seed = kwp_client.security_access(ACCESS_TYPE.PROGRAMMING_REQUEST_SEED)
-    print(f"seed: {seed.hex()}")
+        print("\nRequest seed")
+        seed = kwp_client.security_access(ACCESS_TYPE.PROGRAMMING_REQUEST_SEED)
+        print(f"seed: {seed.hex()}")
 
-    seed_int = struct.unpack(">I", seed)[0]
-    key_int = compute_key(seed_int)
-    key = struct.pack(">I", key_int)
-    print(f"key: {key.hex()}")
+        seed_int = struct.unpack(">I", seed)[0]
+        key_int = compute_key(seed_int)
+        key = struct.pack(">I", key_int)
+        print(f"key: {key.hex()}")
 
-    print("\n Send key")
-    kwp_client.security_access(ACCESS_TYPE.PROGRAMMING_SEND_KEY, key)
+        print("\n Send key")
+        kwp_client.security_access(ACCESS_TYPE.PROGRAMMING_SEND_KEY, key)
 
-    print("\nRequest download")
-    size = args.end_address - args.start_address + 1
-    chunk_size = kwp_client.request_download(args.start_address, size)
-    print(f"Chunk size: {chunk_size}")
-    assert chunk_size >= CHUNK_SIZE, "Chosen chunk size too large"
+        print("\nRequest download")
+        size = args.end_address - args.start_address + 1
+        chunk_size = kwp_client.request_download(args.start_address, size)
+        print(f"Chunk size: {chunk_size}")
+        assert chunk_size >= CHUNK_SIZE, "Chosen chunk size too large"
 
-    print("\nErase flash")
-    f_routine = kwp_client.erase_flash(args.start_address, args.end_address)
-    print("F_routine", f_routine)
-    print("Done. Waiting to reconnect...")
+        print("\nErase flash")
+        f_routine = kwp_client.erase_flash(args.start_address, args.end_address)
+        print("F_routine", f_routine)
+        print("Done. Waiting to reconnect...")
 
-    for i in range(10):
-        time.sleep(1)
-        print(f"\nReconnecting... {i}")
+        for i in range(10):
+            time.sleep(1)
+            print(f"\nReconnecting... {i}")
 
-        p.can_clear(0xFFFF)
-        try:
-            tp20 = TP20Transport(p, 0x9, bus=args.bus)
-            break
-        except Exception as e:
-            print(e)
+            p.can_clear(0xFFFF)
+            try:
+                tp20 = TP20Transport(p, 0x9, bus=args.bus)
+                break
+            except Exception as e:
+                print(e)
 
-    kwp_client = KWP2000Client(tp20)
+        kwp_client = KWP2000Client(tp20)
 
-    print("\nRequest erase results")
-    result = kwp_client.request_routine_results_by_local_identifier(ROUTINE_CONTROL_TYPE.ERASE_FLASH)
-    assert result == b"\x00", "Erase failed"
+        print("\nRequest erase results")
+        result = kwp_client.request_routine_results_by_local_identifier(ROUTINE_CONTROL_TYPE.ERASE_FLASH)
+        assert result == b"\x00", "Erase failed"
 
-    print("\nTransfer data")
-    to_flash = input_fw_s[args.start_address : args.end_address + 1]
-    checksum = sum(to_flash) & 0xFFFF
+        print("\nTransfer data")
+        to_flash = input_fw_s[args.start_address : args.end_address + 1]
+        checksum = sum(to_flash) & 0xFFFF
 
-    progress = tqdm.tqdm(total=len(to_flash))
+        progress = tqdm.tqdm(total=len(to_flash))
 
-    while to_flash:
-        chunk = to_flash[:CHUNK_SIZE]
-        kwp_client.transfer_data(chunk)
+        while to_flash:
+            chunk = to_flash[:CHUNK_SIZE]
+            kwp_client.transfer_data(chunk)
 
-        # Keep channel alive
-        tp20.can_send(b"\xa3")
-        tp20.can_recv()
+            # Keep channel alive
+            tp20.can_send(b"\xa3")
+            tp20.can_recv()
 
-        to_flash = to_flash[CHUNK_SIZE:]
-        progress.update(CHUNK_SIZE)
+            to_flash = to_flash[CHUNK_SIZE:]
+            progress.update(CHUNK_SIZE)
 
-    print("\nRequest transfer exit")
-    kwp_client.request_transfer_exit()
+        print("\nRequest transfer exit")
+        kwp_client.request_transfer_exit()
 
-    print("\nStart checksum check")
-    kwp_client.calculate_flash_checksum(args.start_address, args.end_address, checksum)
+        print("\nStart checksum check")
+        kwp_client.calculate_flash_checksum(args.start_address, args.end_address, checksum)
 
-    print("\nRequest checksum results")
-    result = kwp_client.request_routine_results_by_local_identifier(ROUTINE_CONTROL_TYPE.CALCULATE_FLASH_CHECKSUM)
-    assert result == b"\x00", "Checksum check failed"
+        print("\nRequest checksum results")
+        result = kwp_client.request_routine_results_by_local_identifier(ROUTINE_CONTROL_TYPE.CALCULATE_FLASH_CHECKSUM)
+        assert result == b"\x00", "Checksum check failed"
+
+        if not args.hcaTorqueMaps:
+            print("\nStop communication")
+            kwp_client.stop_communication()
+            print("\nDone!")
+            sys.exit(1)
+        else:
+            toggle + 1
 
     print("\nStop communication")
     kwp_client.stop_communication()
