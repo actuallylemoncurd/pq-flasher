@@ -55,31 +55,32 @@ if __name__ == "__main__":
     p.can_clear(0xFFFF)
     p.set_safety_mode(Panda.SAFETY_ALLOUTPUT)
 
-    print("Connecting...")
-    tp20 = TP20Transport(p, 0x9, bus=args.bus)
-    kwp_client = KWP2000Client(tp20)
-
-    print("\nEntering programming mode")
-    kwp_client.diagnostic_session_control(SESSION_TYPE.PROGRAMMING)
-    print("Done. Waiting to reconnect...")
-
-    for i in range(10):
-        time.sleep(1)
-        print(f"\nReconnecting... {i}")
-
-        p.can_clear(0xFFFF)
-        try:
-            tp20 = TP20Transport(p, 0x9, bus=args.bus)
-            break
-        except Exception as e:
-            print(e)
-
-    kwp_client = KWP2000Client(tp20)
-
     for ii in range (2):
         if toggle == 1:
             args.start_address = 385024 #5E000
             args.end_address = 389119   #5EFFF
+
+        print("Connecting...")
+        tp20 = TP20Transport(p, 0x9, bus=args.bus)
+        kwp_client = KWP2000Client(tp20)
+
+        print("\nEntering programming mode")
+        kwp_client.diagnostic_session_control(SESSION_TYPE.PROGRAMMING)
+        print("Done. Waiting to reconnect...")
+
+        for i in range(10):
+            time.sleep(1)
+            print(f"\nReconnecting... {i}")
+
+            p.can_clear(0xFFFF)
+            try:
+                tp20 = TP20Transport(p, 0x9, bus=args.bus)
+                break
+            except Exception as e:
+                print(e)
+
+        kwp_client = KWP2000Client(tp20)
+        
         print("\nReading ecu identification & flash status")
         ident = kwp_client.read_ecu_identifcation(ECU_IDENTIFICATION_TYPE.ECU_IDENT)
         print("ECU identification", ident)
