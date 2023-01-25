@@ -161,9 +161,9 @@ if __name__ == "__main__":
             print("\nDone!")
             sys.exit(1)
         else:
-            toggle + 1
             print("\nStop communication")
             kwp_client.stop_communication()
             time.sleep(2)
+            toggle + 1
 
     print("\nDone!")
