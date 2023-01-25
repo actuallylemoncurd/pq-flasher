@@ -33,8 +33,8 @@ patches = {
         #(0x0005D096, b"\xF5", b"\xEA"),  #possible vib_amp stuff, shouldnt be needed for HCA
         #(0x0005D097, b"\x00", b"\x01"),
         # Loosen clamp
-        (0x0005D044, Override, b"\x40"),
-        (0x0005D045, Override, b"\x04"),
+        (0x0005D044, Override, b"\x8b"),  #change boost from 0x440 to 0x38b.
+        (0x0005D045, Override, b"\x03"),  #0x38b is found STOCK in kamolds fw, 0x220 is found elsewhere. so we know its a good value, and should indeed be higher than needed for 5, even 6nm
         # Booooooooooooost
         (0x0005E667, b"\x32", b"\x64"),  #hca_lm_offset_torque_handler
         (0x0005E66F, b"\x32", b"\x64"),
