@@ -30,8 +30,8 @@ patches = {
         (0x0005D0A9, Override, b"\x01"),
         (0x0005D0AA, Override, b"\x98"),
         (0x0005D0AB, Override, b"\x01"),
-        (0x0005D096, b"\xF5", b"\xEA"),
-        (0x0005D097, b"\x00", b"\x01"),
+        #(0x0005D096, b"\xF5", b"\xEA"),  #possible vib_amp stuff, shouldnt be needed for HCA
+        #(0x0005D097, b"\x00", b"\x01"),
         # Loosen clamp
         (0x0005D044, Override, b"\x40"),
         (0x0005D045, Override, b"\x04"),
@@ -40,13 +40,13 @@ patches = {
         (0x0005E66F, b"\x32", b"\x64"),
         (0x0005E677, b"\x32", b"\x64"),
 
-        (0x0005E643, b"\x32", b"\x64"),  #FUN_0002b3f6 - DWORD_0005e12c
-        (0x0005E64B, b"\x32", b"\x64"),
-        (0x0005E653, b"\x32", b"\x64"),
+        #(0x0005E643, b"\x32", b"\x64"),  #FUN_0002b3f6 - DWORD_0005e12c
+        #(0x0005E64B, b"\x32", b"\x64"),
+        #(0x0005E653, b"\x32", b"\x64"),  #3b3f6 appears to be for Synchro-Wunschdrehz, shouldnt be needed for HCA.
 
-        (0x0005E658, b"\x08", b"\x10"),  #FUN_0002b3f6 - DWORD_0005e138
-        (0x0005E659, b"\x08", b"\x10"),
-        (0x0005E65A, b"\x08", b"\x10"),
+        #(0x0005E658, b"\x08", b"\x10"),  #FUN_0002b3f6 - DWORD_0005e138
+        #(0x0005E659, b"\x08", b"\x10"),
+        #(0x0005E65A, b"\x08", b"\x10"),  #weird this ropes in the HCA mode being 5 or 7 though.....
     ]
 }
 
