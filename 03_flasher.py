@@ -155,15 +155,15 @@ if __name__ == "__main__":
         result = kwp_client.request_routine_results_by_local_identifier(ROUTINE_CONTROL_TYPE.CALCULATE_FLASH_CHECKSUM)
         assert result == b"\x00", "Checksum check failed"
 
-        if not args.hcaTorqueMaps:
-            print("\nStop communication")
-            kwp_client.stop_communication()
-            print("\nDone!")
-            sys.exit(1)
-        else:
+        if args.hcaTorqueMaps:
             print("\nStop communication")
             kwp_client.stop_communication()
             time.sleep(2)
             toggle + 1
+        else:
+            print("\nStop communication")
+            kwp_client.stop_communication()
+            print("\nDone!")
+            sys.exit(1)
 
     print("\nDone!")
