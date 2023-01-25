@@ -36,19 +36,15 @@ patches = {
         (0x0005D044, Override, b"\x40"),
         (0x0005D045, Override, b"\x04"),
         # Booooooooooooost
-        (0x0005E667, b"\x32", b"\x64"),
+        (0x0005E667, b"\x32", b"\x64"),  #hca_lm_offset_torque_handler
         (0x0005E66F, b"\x32", b"\x64"),
         (0x0005E677, b"\x32", b"\x64"),
 
-        (0x0005E643, b"\x32", b"\x64"),
+        (0x0005E643, b"\x32", b"\x64"),  #FUN_0002b3f6 - DWORD_0005e12c
         (0x0005E64B, b"\x32", b"\x64"),
         (0x0005E653, b"\x32", b"\x64"),
 
-        #(0x0005E63A, b"\x75", b"\xEA"),
-        #(0x0005E63B, b"\x75", b"\xEA"),
-        #(0x0005E63C, b"\x75", b"\xEA"),
-
-        (0x0005E658, b"\x08", b"\x10"),
+        (0x0005E658, b"\x08", b"\x10"),  #FUN_0002b3f6 - DWORD_0005e138
         (0x0005E659, b"\x08", b"\x10"),
         (0x0005E65A, b"\x08", b"\x10"),
     ]
