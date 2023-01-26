@@ -33,20 +33,47 @@ patches = {
         # Loosen clamp
         (0x0005D044, Override, b"\x8b"),  #change boost from 0x440 to 0x38b.
         (0x0005D045, Override, b"\x03"),  #0x38b is found STOCK in kamolds fw, 0x220 is found elsewhere. so we know its a good value, and should indeed be higher than needed for 5, even 6nm
+        
         # Booooooooooooost
         (0x0005E667, b"\x32", b"\x64"),  #hca_lm_offset_torque_handler
         (0x0005E66F, b"\x32", b"\x64"),
         (0x0005E677, b"\x32", b"\x64"),
         # FUN_00029272 maps
-        #(0x0005E524, b"\x0E", b"\x1C"),  #DAT_0005e0cc map
-        #(0x0005E526, b"\x44", b"\x88"),
+        (0x0005E518, b"\x0a", b"\x14"),  #DAT_0005e0c0 map
+        (0x0005E51A, b"\x0a", b"\x14"),
+        (0x0005E51C, b"\x0a", b"\x14"),
 
-        #(0x0005E578, b"\x0E", b"\x1C"),  #PTR_LAB_0005e0d8 maps
-        #(0x0005E57A, b"\x44", b"\x88"),
-        #(0x0005E594, b"\x0E", b"\x1C"),
-        #(0x0005E596, b"\x44", b"\x88"),
-        #(0x0005E5B0, b"\x0E", b"\x1C"),
-        #(0x0005E5B2, b"\x44", b"\x88"),
+        (0x0005E490, b"\x0a", b"\x14"),  #DAT_0005e0a8 map
+        (0x0005E4BC, b"\x0a", b"\x14"),
+        (0x0005E4E8, b"\x0a", b"\x14"),
+
+        (0x0005E524, b"\x0E", b"\x1C"),  #DAT_0005e0cc map
+        (0x0005E526, b"\x44", b"\x88"),
+
+        (0x0005E578, b"\x0E", b"\x1C"),  #PTR_LAB_0005e0d8 map
+        (0x0005E57A, b"\x44", b"\x88"),
+        (0x0005E594, b"\x0E", b"\x1C"),
+        (0x0005E596, b"\x44", b"\x88"),
+        (0x0005E5B0, b"\x0E", b"\x1C"),
+        (0x0005E5B2, b"\x44", b"\x88"),
+
+        (0x0005E5C8, b"\x14", b"\x28"),  #PTR_LAB_0005e0e4 map
+        (0x0005E5CA, b"\x14", b"\x28"),
+        (0x0005E5CC, b"\x14", b"\x28"),
+
+        (0x0005E5CE, b"\x42", b"\x84"),  #DAT_0005e0f0 map
+        (0x0005E5D0, b"\x42", b"\x84"),
+        (0x0005E5D2, b"\x42", b"\x84"),
+
+        (0x0005E5D7, b"\x0F", b"\x1E"),  #PTR_LAB_0005e0fc map
+        (0x0005E5D8, b"\x32", b"\x64"),
+        (0x0005E5D9, b"\x64", b"\xC8"),
+        (0x0005E5E7, b"\x0F", b"\x1E"),
+        (0x0005E5E8, b"\x32", b"\x64"),
+        (0x0005E5E9, b"\x64", b"\xC8"),
+        (0x0005E5F7, b"\x0F", b"\x1E"),
+        (0x0005E5F8, b"\x32", b"\x64"),
+        (0x0005E5F9, b"\x64", b"\xC8"),
     ]
 }
 
