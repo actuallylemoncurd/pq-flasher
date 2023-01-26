@@ -30,23 +30,23 @@ patches = {
         (0x0005D0A9, Override, b"\x01"),
         (0x0005D0AA, Override, b"\x98"),
         (0x0005D0AB, Override, b"\x01"),
-        #(0x0005D096, b"\xF5", b"\xEA"),  #possible vib_amp stuff, shouldnt be needed for HCA
-        #(0x0005D097, b"\x00", b"\x01"),
         # Loosen clamp
         (0x0005D044, Override, b"\x8b"),  #change boost from 0x440 to 0x38b.
         (0x0005D045, Override, b"\x03"),  #0x38b is found STOCK in kamolds fw, 0x220 is found elsewhere. so we know its a good value, and should indeed be higher than needed for 5, even 6nm
         # Booooooooooooost
-        #(0x0005E667, b"\x32", b"\x64"),  #hca_lm_offset_torque_handler
-        #(0x0005E66F, b"\x32", b"\x64"),
-        #(0x0005E677, b"\x32", b"\x64"),
+        (0x0005E667, b"\x32", b"\x64"),  #hca_lm_offset_torque_handler
+        (0x0005E66F, b"\x32", b"\x64"),
+        (0x0005E677, b"\x32", b"\x64"),
+        # FUN_00029272 maps
+        #(0x0005E524, b"\x0E", b"\x1C"),  #DAT_0005e0cc map
+        #(0x0005E526, b"\x44", b"\x88"),
 
-        #(0x0005E643, b"\x32", b"\x64"),  #FUN_0002b3f6 - DWORD_0005e12c
-        #(0x0005E64B, b"\x32", b"\x64"),
-        #(0x0005E653, b"\x32", b"\x64"),  #3b3f6 appears to be for Synchro-Wunschdrehz, shouldnt be needed for HCA.
-
-        #(0x0005E658, b"\x08", b"\x10"),  #FUN_0002b3f6 - DWORD_0005e138
-        #(0x0005E659, b"\x08", b"\x10"),
-        #(0x0005E65A, b"\x08", b"\x10"),  #weird this ropes in the HCA mode being 5 or 7 though.....
+        #(0x0005E578, b"\x0E", b"\x1C"),  #PTR_LAB_0005e0d8 maps
+        #(0x0005E57A, b"\x44", b"\x88"),
+        #(0x0005E594, b"\x0E", b"\x1C"),
+        #(0x0005E596, b"\x44", b"\x88"),
+        #(0x0005E5B0, b"\x0E", b"\x1C"),
+        #(0x0005E5B2, b"\x44", b"\x88"),
     ]
 }
 
