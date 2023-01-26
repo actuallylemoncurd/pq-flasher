@@ -36,19 +36,9 @@ patches = {
         (0x0005D044, Override, b"\x8b"),  #change boost from 0x440 to 0x38b.
         (0x0005D045, Override, b"\x03"),  #0x38b is found STOCK in kamolds fw, 0x220 is found elsewhere. so we know its a good value, and should indeed be higher than needed for 5, even 6nm
         # Booooooooooooost
-        (0x0005E667, b"\x32", b"\x64"),  #hca_lm_offset_torque_handler
-        (0x0005E66F, b"\x32", b"\x64"),
-        (0x0005E677, b"\x32", b"\x64"),
-        # FUN_00029272 maps
-        (0x0005E524, b"\x0E", b"\x1C"),  #DAT_0005e0cc map
-        (0x0005E526, b"\x44", b"\x88"),
-
-        (0x0005E578, b"\x0E", b"\x1C"),  #PTR_LAB_0005e0d8 maps
-        (0x0005E57A, b"\x44", b"\x88"),
-        (0x0005E594, b"\x0E", b"\x1C"),
-        (0x0005E596, b"\x44", b"\x88"),
-        (0x0005E5B0, b"\x0E", b"\x1C"),
-        (0x0005E5B2, b"\x44", b"\x88"),
+        #(0x0005E667, b"\x32", b"\x64"),  #hca_lm_offset_torque_handler
+        #(0x0005E66F, b"\x32", b"\x64"),
+        #(0x0005E677, b"\x32", b"\x64"),
 
         #(0x0005E643, b"\x32", b"\x64"),  #FUN_0002b3f6 - DWORD_0005e12c
         #(0x0005E64B, b"\x32", b"\x64"),
