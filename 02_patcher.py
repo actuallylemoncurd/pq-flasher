@@ -203,7 +203,7 @@ if __name__ == "__main__":
         length = len(orig)
         cur = input_fw_s[addr : addr + length]
 
-        if (cur != orig) and orig != (Override or Override2):
+        if (cur != orig) and (orig != Override) or (orig != Override2):
             assert cur == orig, f"Unexpected values in input FW {cur.hex()} expected {orig.hex()}"
 
         if new is not None:
