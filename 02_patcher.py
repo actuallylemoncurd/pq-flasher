@@ -141,6 +141,7 @@ patches = {
         (0x0005E5FF, b"\x75", b"\xEA"),
         (0x0005E600, b"\x7F", b"\xFE"),
         (0x0005E601, b"\x93\x00", b"\x26\x01"),
+    ]
 }
 
 # (checksum addr, start, end)
