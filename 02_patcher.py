@@ -33,6 +33,7 @@ patches = {
         # Loosen clamp
         (0x0005D044, Override, b"\x8b"),  #change boost from 0x440 to 0x38b.
         (0x0005D045, Override, b"\x03"),  #0x38b is found STOCK in kamolds fw, 0x220 is found elsewhere. so we know its a good value, and should indeed be higher than needed for 5, even 6nm
+    ]
 }
 
 # (checksum addr, start, end)
