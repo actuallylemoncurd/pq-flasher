@@ -5,7 +5,6 @@ import crcmod
 
 # fmt: off
 Override = b"\x99"
-Override2 = b"\x99\x99"
 # (addr, orig, new (optional) )
 patches = {
     "2501": [
@@ -36,15 +35,15 @@ patches = {
         (0x0005D045, Override, b"\x03"),  #0x38b is found STOCK in kamolds fw, 0x220 is found elsewhere. so we know its a good value, and should indeed be higher than needed for 5, even 6nm
         
         # Booooooooooooost
-        (0x0005E669, Override, b"\x76"),  #hca_lm_offset_torque_handler
+        (0x0005E669, Override, b"\x9C"),  #hca_lm_offset_torque_handler
         (0x0005E66A, Override, b"\x9C"),
-        #(0x0005E66B, b"\x9B", b"\xFF"),
-        (0x0005E671, Override, b"\x76"),
+        (0x0005E66B, Override, b"\x9C"),
+        (0x0005E671, Override, b"\x9C"),
         (0x0005E672, Override, b"\x9C"),
-        #(0x0005E673, b"\x9B", b"\xFF"),
-        (0x0005E679, Override, b"\x76"),
+        (0x0005E673, Override, b"\x9C"),
+        (0x0005E679, Override, b"\x9C"),
         (0x0005E67A, Override, b"\x9C"),
-        #(0x0005E67B, b"\x9B", b"\xFF"),
+        (0x0005E67B, Override, b"\x9C"),
     ]
 }
 
@@ -106,8 +105,8 @@ if __name__ == "__main__":
         length = len(orig)
         cur = input_fw_s[addr : addr + length]
 
-        #if (cur != orig) and (orig != Override) or (orig != Override2):
-        #    assert cur == orig, f"Unexpected values in input FW {cur.hex()} expected {orig.hex()}"
+        if (cur != orig) and orig != Override:
+            assert cur == orig, f"Unexpected values in input FW {cur.hex()} expected {orig.hex()}"
 
         if new is not None:
             assert len(new) == length
