@@ -25,14 +25,10 @@ patches = {
         (0x0005D289, b"\x64", b"\x00"),  # Disengage countdown
         (0x0005D2FA, b"\x14", b"\x00"),  # Min speed
         (0x0005FFFC, b"Ende", b"\xff\xff\xff\xff"),  # End of FW marker
-        # many_hca_checks violation flag value buff
-        (0x0005D0A8, Override, b"\x98"),
-        (0x0005D0A9, Override, b"\x01"),
-        (0x0005D0AA, Override, b"\x98"),
-        (0x0005D0AB, Override, b"\x01"),
+
         # Loosen clamp
-        (0x0005D044, Override, b"\x8b"),  #change boost from 0x440 to 0x38b.
-        (0x0005D045, Override, b"\x03"),  #0x38b is found STOCK in kamolds fw, 0x220 is found elsewhere. so we know its a good value, and should indeed be higher than needed for 5, even 6nm
+        (0x0005D044, Override, b"\x40"),  # temporarily boost to 0x440 whilst testing for HCA maps
+        (0x0005D045, Override, b"\x04"),  # 0x38B is the highest observed clamp limit STOCK
     ]
 }
 
