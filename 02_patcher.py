@@ -29,11 +29,6 @@ patches = {
         # Loosen clamp
         #(0x0005D044, Override, b"\x40"),  # temporarily boost to 0x440 whilst testing for HCA maps
         #(0x0005D045, Override, b"\x04"),  # 0x38B is the highest observed clamp limit STOCK
-
-        #29272 maps
-        (0x0005E60C, b"\x00\x54\x76\x8E\xA2\xC0", b"\x8E\xA2\xA2\xC0\xC0\xC0"),  # AddrTable0005e108
-        (0x0005E61C, b"\x00\x54\x76\x8E\xA2\xC0", b"\x8E\xA2\xA2\xC0\xC0\xC0"),
-        (0x0005E62C, b"\x00\x54\x76\x8E\xA2\xC0", b"\x8E\xA2\xA2\xC0\xC0\xC0"),
     ]
 }
 
