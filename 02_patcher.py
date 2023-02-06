@@ -26,10 +26,6 @@ patches = {
         (0x0005D2FA, b"\x14", b"\x00"),  # Min speed
         (0x0005FFFC, b"Ende", b"\xff\xff\xff\xff"),  # End of FW marker
 
-        # Loosen clamp
-        #(0x0005D044, Override, b"\x40"),  # temporarily boost to 0x440 whilst testing for HCA maps
-        #(0x0005D045, Override, b"\x04"),  # 0x38B is the highest observed clamp limit STOCK
-
         # hca_lm_offset map
         (0x0005E669, b"\x53\x76\x9C", b"\x53\xAB\xFF"),  # 0x5E150 map
         (0x0005E671, b"\x53\x76\x9C", b"\x53\xAB\xFF"),
