@@ -90,8 +90,9 @@ if __name__ == "__main__":
         length = len(orig)
         cur = input_fw_s[addr : addr + length]
 
-        if (cur != orig) and (addr != (0x0005E669 or 0x0005E671 or 0x0005E679)):
-            assert cur == orig, f"Unexpected values in input FW {cur.hex()} expected {orig.hex()}"
+        if (cur != orig):
+            if addr not in {0x0005E669, 0x0005E671, 0x0005E679}:
+                assert cur == orig, f"Unexpected values in input FW {cur.hex()} expected {orig.hex()}"
 
         if new is not None:
             assert len(new) == length
