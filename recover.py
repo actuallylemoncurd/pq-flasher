@@ -30,8 +30,8 @@ if __name__ == "__main__":
     parser.add_argument("--bus", default=1, type=int, help="CAN bus number to use")
     args = parser.parse_args()
 
-    startAddress = ["676", "588", "532", "508", "4", "40960"]
-    endAddress = ["705", "635", "547", "530", "33", "393215"]
+    startAddress = [676, 588, 532, 508, 4, 40960]
+    endAddress = [705, 635, 547, 530, 33, 393215]
 
     with open("firmware/lh0013501.bin", "rb") as input_fw:
         input_fw_s = input_fw.read()
