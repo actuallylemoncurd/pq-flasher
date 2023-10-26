@@ -91,6 +91,47 @@ if __name__ == "__main__":
     kwp_client.security_access(ACCESS_TYPE.PROGRAMMING_SEND_KEY, key)
 
     for z in range(len(startAddress)):
+        if z == 6:
+            kwp_client.stop_communication()
+            for i in range(10):
+                time.sleep(1)
+                print(f"\nReconnecting... {i}")
+
+            print("Connecting...")
+            tp20 = TP20Transport(p, 0x9, bus=args.bus)
+            kwp_client = KWP2000Client(tp20)
+
+            print("\nEntering programming mode")
+            kwp_client.diagnostic_session_control(SESSION_TYPE.PROGRAMMING)
+            print("Done. Waiting to reconnect...")
+
+            for i in range(10):
+                time.sleep(1)
+                print(f"\nReconnecting... {i}")
+
+                p.can_clear(0xFFFF)
+                try:
+                    tp20 = TP20Transport(p, 0x9, bus=args.bus)
+                    break
+                except Exception as e:
+                    print(e)
+
+                status = kwp_client.read_ecu_identifcation(ECU_IDENTIFICATION_TYPE.STATUS_FLASH)
+
+            print("Flash status", status)
+
+            print("\nRequest seed")
+            seed = kwp_client.security_access(ACCESS_TYPE.PROGRAMMING_REQUEST_SEED)
+            print(f"seed: {seed.hex()}")
+
+            seed_int = struct.unpack(">I", seed)[0]
+            key_int = compute_key(seed_int)
+            key = struct.pack(">I", key_int)
+            print(f"key: {key.hex()}")
+
+            print("\n Send key")
+            kwp_client.security_access(ACCESS_TYPE.PROGRAMMING_SEND_KEY, key)
+
         print("\nRequest download")
         size = endAddress[z] - startAddress[z] + 1
         chunk_size = kwp_client.request_download(startAddress[z], size)
