@@ -7,7 +7,7 @@ from argparse import ArgumentParser
 
 from panda import Panda  # type: ignore
 from tp20 import TP20Transport
-from kwp2000 import ACCESS_TYPE, ROUTINE_CONTROL_TYPE, KWP2000Client, SESSION_TYPE, ECU_IDENTIFICATION_TYPE
+from kwp2000 import ACCESS_TYPE, ROUTINE_CONTROL_TYPE, KWP2000Client, RESET_TYPE, SESSION_TYPE, ECU_IDENTIFICATION_TYPE
 
 # global def's
 CHUNK_SIZE = 240
@@ -96,9 +96,10 @@ if __name__ == "__main__":
 
     for z in range(len(startAddress)):
         if z == len(startAddress):
+            kwp_client.ecu_reset(RESET_TYPE.SOFT)
             kwp_client.stop_communication()
             p.can_clear(0xFFFF)
-            print("Stopping comms")
+            print("Resetting ECU")
             for i in range(15):
                 time.sleep(1)
                 print(f"\nWaiting... {i}/15")

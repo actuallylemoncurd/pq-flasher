@@ -76,6 +76,12 @@ class SESSION_TYPE(IntEnum):
     ENGINEERING_MODE = 0x86
     DIAGNOSTIC = 0x89
 
+class RESET_TYPE(IntEnum):
+    HARD = 1
+    KEY_OFF_ON = 2
+    SOFT = 3
+    ENABLE_RAPID_POWER_SHUTDOWN = 4
+    DISABLE_RAPID_POWER_SHUTDOWN = 5
 
 class ACCESS_TYPE(IntEnum):
     PROGRAMMING_REQUEST_SEED = 1
@@ -183,6 +189,9 @@ class KWP2000Client:
 
     def diagnostic_session_control(self, session_type: SESSION_TYPE):
         self._kwp(SERVICE_TYPE.DIAGNOSTIC_SESSION_CONTROL, subfunction=session_type)
+
+    def ecu_reset(self, reset_type: RESET_TYPE):
+        self._kwp(SERVICE_TYPE.ECU_RESET, subfunction=reset_type)
 
     def security_access(self, access_type: ACCESS_TYPE, security_key: bytes = b""):
         request_seed = access_type % 2 != 0
