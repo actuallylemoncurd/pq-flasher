@@ -9,7 +9,9 @@ from panda import Panda  # type: ignore
 from tp20 import TP20Transport
 from kwp2000 import ACCESS_TYPE, ROUTINE_CONTROL_TYPE, KWP2000Client, SESSION_TYPE, ECU_IDENTIFICATION_TYPE
 
+# global def's
 CHUNK_SIZE = 240
+p = Panda()
 
 
 def compute_key(seed):
@@ -24,6 +26,30 @@ def compute_key(seed):
         key = key & 0xFFFF_FFFF
     return key
 
+def reconn():
+    for i in range(10):
+        time.sleep(1)
+        print(f"\nReconnecting... {i}")
+
+        p.can_clear(0xFFFF)
+        try:
+            tp20 = TP20Transport(p, 0x9, bus=args.bus)
+            break
+        except Exception as e:
+            print(e)
+
+def auth():
+    print("\nRequest seed")
+    seed = kwp_client.security_access(ACCESS_TYPE.PROGRAMMING_REQUEST_SEED)
+    print(f"seed: {seed.hex()}")
+
+    seed_int = struct.unpack(">I", seed)[0]
+    key_int = compute_key(seed_int)
+    key = struct.pack(">I", key_int)
+    print(f"key: {key.hex()}")
+
+    print("\n Send key")
+    kwp_client.security_access(ACCESS_TYPE.PROGRAMMING_SEND_KEY, key)
 
 if __name__ == "__main__":
     parser = ArgumentParser()
@@ -46,7 +72,6 @@ if __name__ == "__main__":
     if resp.lower() != "y":
         sys.exit(1)
 
-    p = Panda()
     p.set_safety_mode(Panda.SAFETY_ALLOUTPUT)
     p.can_clear(0xFFFF)
 
@@ -58,18 +83,7 @@ if __name__ == "__main__":
     kwp_client.diagnostic_session_control(SESSION_TYPE.PROGRAMMING)
     print("Done. Waiting to reconnect...")
 
-    for i in range(10):
-        time.sleep(1)
-        print(f"\nReconnecting... {i}")
-
-        p.can_clear(0xFFFF)
-        try:
-            tp20 = TP20Transport(p, 0x9, bus=args.bus)
-            break
-        except Exception as e:
-            print(e)
-
-    kwp_client = KWP2000Client(tp20)
+    reconn()
 
     print("\nReading ecu identification & flash status")
     ident = kwp_client.read_ecu_identifcation(ECU_IDENTIFICATION_TYPE.ECU_IDENT)
@@ -78,59 +92,27 @@ if __name__ == "__main__":
     status = kwp_client.read_ecu_identifcation(ECU_IDENTIFICATION_TYPE.STATUS_FLASH)
     print("Flash status", status)
 
-    print("\nRequest seed")
-    seed = kwp_client.security_access(ACCESS_TYPE.PROGRAMMING_REQUEST_SEED)
-    print(f"seed: {seed.hex()}")
-
-    seed_int = struct.unpack(">I", seed)[0]
-    key_int = compute_key(seed_int)
-    key = struct.pack(">I", key_int)
-    print(f"key: {key.hex()}")
-
-    print("\n Send key")
-    kwp_client.security_access(ACCESS_TYPE.PROGRAMMING_SEND_KEY, key)
+    auth()
 
     for z in range(len(startAddress)):
-        if z == 6:
+        if z == len(startAddress):
             kwp_client.stop_communication()
-            for i in range(10):
+            p.can_clear(0xFFFF)
+            print("Stopping comms")
+            for i in range(15):
                 time.sleep(1)
-                print(f"\nReconnecting... {i}")
-
-            print("Connecting...")
-            tp20 = TP20Transport(p, 0x9, bus=args.bus)
-            kwp_client = KWP2000Client(tp20)
+                print(f"\nWaiting... {i}/15")
 
             print("\nEntering programming mode")
             kwp_client.diagnostic_session_control(SESSION_TYPE.PROGRAMMING)
             print("Done. Waiting to reconnect...")
 
-            for i in range(10):
-                time.sleep(1)
-                print(f"\nReconnecting... {i}")
+            reconn()
 
-                p.can_clear(0xFFFF)
-                try:
-                    tp20 = TP20Transport(p, 0x9, bus=args.bus)
-                    break
-                except Exception as e:
-                    print(e)
-
-                status = kwp_client.read_ecu_identifcation(ECU_IDENTIFICATION_TYPE.STATUS_FLASH)
-
+            status = kwp_client.read_ecu_identifcation(ECU_IDENTIFICATION_TYPE.STATUS_FLASH)
             print("Flash status", status)
 
-            print("\nRequest seed")
-            seed = kwp_client.security_access(ACCESS_TYPE.PROGRAMMING_REQUEST_SEED)
-            print(f"seed: {seed.hex()}")
-
-            seed_int = struct.unpack(">I", seed)[0]
-            key_int = compute_key(seed_int)
-            key = struct.pack(">I", key_int)
-            print(f"key: {key.hex()}")
-
-            print("\n Send key")
-            kwp_client.security_access(ACCESS_TYPE.PROGRAMMING_SEND_KEY, key)
+            auth()
 
         print("\nRequest download")
         size = endAddress[z] - startAddress[z] + 1
@@ -144,24 +126,17 @@ if __name__ == "__main__":
         print("F_routine", f_routine)
         print("Done. Waiting to reconnect...")
 
-        for i in range(10):
-            time.sleep(1)
-            print(f"\nReconnecting... {i}")
+        reconn()
 
-            p.can_clear(0xFFFF)
-            try:
-                tp20 = TP20Transport(p, 0x9, bus=args.bus)
-                break
-            except Exception as e:
-                print(e)
-
-        kwp_client = KWP2000Client(tp20)
-
-        print("\nRequest erase results")
         result = kwp_client.request_routine_results_by_local_identifier(ROUTINE_CONTROL_TYPE.ERASE_FLASH)
         assert result == b"\x00", "Erase failed"
 
+        if z == len(startAddress):
+            print("Authenticating into EPS after erase on big flash")
+            auth()
+
         print("\nTransfer data")
+        print(f"Section {z}/{len(startAddress)}")
         to_flash = input_fw_s[startAddress[z] : endAddress[z] + 1]
         checksum = sum(to_flash) & 0xFFFF
 
@@ -183,12 +158,8 @@ if __name__ == "__main__":
 
         print("\nStart checksum check")
         kwp_client.calculate_flash_checksum(startAddress[z], endAddress[z], checksum)
-
-        print("\nRequest checksum results")
         result = kwp_client.request_routine_results_by_local_identifier(ROUTINE_CONTROL_TYPE.CALCULATE_FLASH_CHECKSUM)
         assert result == b"\x00", "Checksum check failed"
-
-        p.can_clear(0xFFFF)
 
     print("\nStop communication")
     kwp_client.stop_communication()
