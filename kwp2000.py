@@ -77,11 +77,8 @@ class SESSION_TYPE(IntEnum):
     DIAGNOSTIC = 0x89
 
 class RESET_TYPE(IntEnum):
-    HARD = 1
-    KEY_OFF_ON = 2
-    SOFT = 3
-    ENABLE_RAPID_POWER_SHUTDOWN = 4
-    DISABLE_RAPID_POWER_SHUTDOWN = 5
+    powerOn = 1
+    powerOnWhileMaintainingCommunication = 2
 
 class ACCESS_TYPE(IntEnum):
     PROGRAMMING_REQUEST_SEED = 1
@@ -205,6 +202,9 @@ class KWP2000Client:
 
     def read_ecu_identifcation(self, data_identifier_type: ECU_IDENTIFICATION_TYPE):
         return self._kwp(SERVICE_TYPE.READ_ECU_IDENTIFICATION, data_identifier_type)
+    
+    def stop_diagnostic_session(self) -> bytes: #this service does not use any parameter definition
+        return self._kwp(SERVICE_TYPE.STOP_DIAGNOSTIC_SESSION)
 
     def request_download(
         self,

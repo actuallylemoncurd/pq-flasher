@@ -96,7 +96,8 @@ if __name__ == "__main__":
 
     for z in range(len(startAddress)):
         if z == len(startAddress):
-            kwp_client.ecu_reset(RESET_TYPE.SOFT)
+            kwp_client.ecu_reset(RESET_TYPE.powerOn)
+            kwp_client.stop_diagnostic_session()
             kwp_client.stop_communication()
             p.can_clear(0xFFFF)
             print("Resetting ECU")
