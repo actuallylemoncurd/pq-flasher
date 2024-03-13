@@ -20,6 +20,9 @@ patches = {
 
         # Custom steering maps, switchable with DCC??
 
+        (0x0005e794, b"\x33\x31\x33\x00\x33\x31\x33\x00\x33\x31\x34",\
+                     b"\x6D\x70\x31\x00\x6D\x70\x32\x00\x6D\x70\x33"),  # ASCII map names, renamed to mp1, mp2, and mp3
+
         # 1: normal golf / NMS         normal (dont need to edit this one, commented it out)
         # 2: mobility, floaty steer!   comfort
         # 3: TTRS/RS3, sporty!!        sport
