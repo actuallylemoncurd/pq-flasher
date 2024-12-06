@@ -1,0 +1,29 @@
+$ cd /data/
+$ git clone https://github.com/dkiiv/pq-flasher
+$ tmux a
+
+` + c
+
+double tap ` to go back to the "live view" of openpilot
+
+CTRL + c to stop current openpilot instance
+CTRL + c a few more times to close that window inside tmux, or double tap ` again
+
+$ cd /data/pq-flasher
+$ pip install -r requirements.txt
+$ ./01_dump.py --bus 1 --output firmware/orig.bin
+
+$ ./02_patcher.py --input firmware/orig.bin --output firmware/patched.bin --version 2501
+OR
+$ ./02_patcher.py --input firmware/orig.bin --output firmware/patched.bin --version 3501
+
+2501:
+$ ./03_flasher.py --bus 1 --input firmware/patched.bin
+OR
+3501:
+$ ./03_flasher.py --bus 1 --input firmware/patched.bin --start-address 380928 --end-address 385023
+
+$ sudo reboot
+
+cycling ignition, make sure you have power steering. warning lights are OK!
+drive around the block, make sure to turn the wheel all the way to the left, then the right
