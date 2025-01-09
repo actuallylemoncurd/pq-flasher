@@ -14,12 +14,8 @@ patches = {
         (0x0005FFFC, b"Ende", b"\xff\xff\xff\xff"),  # End of FW marker
     ],
     "3501": [
-        #(0x0005D828, b"1K0909144R \x003501", b"1K0909144R \x003502"),  # Software number and version
-        #(0x0005D289, b"\x64", b"\x00"),  # Disengage countdown
-        #(0x0005D2FA, b"\x14", b"\x00"),  # Min speed
         (0x0005D304, b"\x0a", b"\xfe"),  # PLA max vehicle speed?
-        (0x0005D306, b"\x01", b"\xfd"),  # PLA max entry speed?
-        (0x0005D0D4, b"\xdc\x01", b"\x82\x00"),  # PLA Driver override torque, jerk limit?
+        #  (0x0005D305, b"\x00", b"\xfd"),  # PLA max entry speed?
         (0x0005FFFC, b"Ende", b"\xff\xff\xff\xff"),  # End of FW marker
     ]
 }
